@@ -116,7 +116,12 @@ public enum Layer {
     /**
      * Kubernetes service
      */
-    K8S_SERVICE(17, true);
+    K8S_SERVICE(17, true),
+
+    /**
+     * For Usually Case, Cache is in Virtual
+     */
+    VIRTUAL_CACHE(18, false);
 
     private final int value;
     /**
