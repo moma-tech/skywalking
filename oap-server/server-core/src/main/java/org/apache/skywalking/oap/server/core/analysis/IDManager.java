@@ -26,6 +26,8 @@ import com.google.common.hash.Hashing;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.skywalking.oap.server.core.Const;
 import org.apache.skywalking.oap.server.core.UnexpectedException;
 import org.apache.skywalking.oap.server.library.util.BooleanUtils;
@@ -33,6 +35,7 @@ import org.apache.skywalking.oap.server.library.util.BooleanUtils;
 /**
  * IDManager includes all ID encode/decode functions for service, service instance and endpoint.
  */
+@Slf4j
 public class IDManager {
     /**
      * Service ID related functions.
@@ -55,10 +58,18 @@ public class IDManager {
             if (strings.length != 2) {
                 throw new UnexpectedException("Can't split service id into 2 parts, " + id);
             }
+            if(StringUtils.isNumericSpace(strings[1])){
+                return new ServiceID.ServiceIDDefinition(
+                        decode(strings[0]),
+                        BooleanUtils.valueToBoolean(Integer.parseInt(strings[1]))
+                );
+            }
+            log.error("Input Entity ID is not legal: {}",id);
             return new ServiceID.ServiceIDDefinition(
-                decode(strings[0]),
-                BooleanUtils.valueToBoolean(Integer.parseInt(strings[1]))
+                    decode(strings[0]),
+                    false
             );
+
         }
 
         /**
